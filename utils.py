@@ -97,8 +97,8 @@ def extract_data(batch_data):
     context_char = torch.from_numpy(batch_data[4]).type(torch.LongTensor).to(device)
     query = torch.from_numpy(batch_data[2]).type(torch.LongTensor).to(device)
     query_char = torch.from_numpy(batch_data[6]).type(torch.LongTensor).to(device)
-    candidate = torch.from_numpy(batch_data[8]).type(torch.DoubleTensor).to(device)
-    candidate_mask = torch.from_numpy(batch_data[9]).type(torch.DoubleTensor).to(device)
+    candidate = torch.from_numpy(batch_data[8]).type(torch.DoubleTensor)
+    candidate_mask = torch.from_numpy(batch_data[9]).type(torch.DoubleTensor)
     return context, context_char, query, query_char, candidate, candidate_mask
 
 
