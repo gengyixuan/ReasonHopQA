@@ -13,6 +13,9 @@ from layers import MaxAttSentence
 from layers import HopAttentionLayer
 from layers import AnswerPredictionLayer
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
+
 class HAQA(torch.nn.Module):
     def __init__(self, hidden_size, batch_size, K,  W_init, config):
         super(HAQA, self).__init__()
@@ -50,10 +53,10 @@ class HAQA(torch.nn.Module):
 
         #-----------------------------------------------------
         # first GA layer
-        context_out_0 = self.context_gru_0(context_embedding)
-        query_out_0 = self.query_gru_0(query_embedding)
-        attention = self.gaao(context_out_0, query_out_0)
-        ga_out = self.ga(context_out_0, query_out_0)
+        context_out_0 = self.context_gru_0(context_embedding).to(device)
+        query_out_0 = self.query_gru_0(query_embedding).to(device)
+        attention = self.gaao(context_out_0, query_out_0).to(device)
+        ga_out = self.ga(context_out_0, query_out_0).to(device)
 
         #-----------------------------------------------------
         # max sentence selection
