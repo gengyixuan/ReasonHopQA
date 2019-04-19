@@ -9,6 +9,7 @@ from modules import BiGRU
 from modules import GatedAttentionLayer
 from modules import GatedAttentionAttOnly
 from modules import MaxAttSentence
+from modules import HopAttentionLayer
 from modules import AnswerPredictionLayer
 
 class HAQA(torch.nn.Module):
@@ -19,6 +20,8 @@ class HAQA(torch.nn.Module):
         
         self.ga = GatedAttentionLayer() # non-parametrized
         self.gaao = GatedAttentionAttOnly() # non-parametrized
+        self.ha = HopAttentionLayer() # parametrized
+        self.gating_w = Variable(torch.Tensor([0.5]), requires_grad=True)
         self.pred = AnswerPredictionLayer() # non-parametrized
         self.K = K
         self.hidden_size = hidden_size
@@ -54,8 +57,10 @@ class HAQA(torch.nn.Module):
         # max sentence selection
         max_sentence = self.max_sentence(startends, attention, context_out_0) # (batch, max_sentence_len, emb_size)
 
-        print(max_sentence)
-        return max_sentence
+        # print(max_sentence)
+        # return max_sentence
+        ha_out = self.ha(max_sentence, context_out_0)
+        layer_out_1 = (1 - self.gating_w) * ha_out + self.gating_w * attention
 
         #-----------------------------------------------------
         context_out_2 = self.context_gru_2(layer_out_1)

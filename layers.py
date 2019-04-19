@@ -178,6 +178,40 @@ class MaxAttSentence(torch.nn.Module):
         return torch.cat(output_sentences, dim=0) # (batch, max_sentence_len, emb_dim)
 
 
+class HopAttentionLayer(torch.nn.Module):
+    def __init__(self):
+        super(HopAttentionLayer, self).__init__()
+        self.softmax1 = nn.Softmax(dim=1)
+        self.linear1 = nn.Linear(128*2, 1)
+
+    def forward(self, targetsentence_emb, context_emb):
+        output_list = []
+        for i in context_emb.shape[1]:
+            context_emb_select = context_emb[:, i, :]
+            tmp = torch.cat((targetsentence_emb, context_emb_select.repeat(1, targetsentence_emb.shape[1], 1)), 2)  # 4 * 100 * 128
+            output = torch.sum(self.linear1(tmp), dim=1) # 4 * 1
+            output_list.append(output)
+        output_tensor = torch.cat(tuple(output_list), 1).unsqueeze(-1) # 4 * 2000 * 1
+        attention = self.softmax1(output_tensor) # 4 * 2000 * 1
+        return torch.einsum("bnm, bnk -> bnk", attention, context_emb)
+
+class GatedComb(torch.nn.Modules):
+    def __init__(self):
+        super(GatedComb, self).__init__()
+        
+
+    def forward(self, targetsentence_emb, context_emb):
+        output_list = []
+        for i in context_emb.shape[1]:
+            context_emb_select = context_emb[:, i, :]
+            tmp = torch.cat((targetsentence_emb, context_emb_select.repeat(1, targetsentence_emb.shape[1], 1)), 2)  # 4 * 100 * 128
+            output = torch.sum(self.linear1(tmp), dim=1) # 4 * 1
+            output_list.append(output)
+        output_tensor = torch.cat(tuple(output_list), 1).unsqueeze(-1) # 4 * 2000 * 1
+        attention = self.softmax1(output_tensor) # 4 * 2000 * 1
+        return torch.einsum("bnm, bnk -> bnk", attention, context_emb)
+
+        
 class AnswerPredictionLayer(torch.nn.Module):
     def __init__(self):
         super(AnswerPredictionLayer, self).__init__()
