@@ -17,7 +17,7 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 
 class HAQA(torch.nn.Module):
-    def __init__(self, hidden_size, batch_size, K,  W_init, config):
+    def __init__(self, hidden_size, batch_size, K,  W_init, config, max_sen_len):
         super(HAQA, self).__init__()
         self.embedding = EmbeddingLayer(W_init, config)
         embedding_size = W_init.shape[1] + config['char_filter_size']
@@ -42,7 +42,7 @@ class HAQA(torch.nn.Module):
         self.context_gru_3 = BiGRU(2*hidden_size, hidden_size, batch_size)
         self.query_gru_3 = BiGRU(embedding_size, hidden_size, batch_size)
 
-        self.max_sentence = MaxAttSentence(100, 2*hidden_size)
+        self.max_sentence = MaxAttSentence(max_sen_len, 2*hidden_size)
 
     
     def forward(self, context, context_char, query, query_char, candidate, candidate_mask, startends):

@@ -69,7 +69,7 @@ def main():
     hidden_size = config['nhidden']
     batch_size = config['batch_size']
 
-    coref_model = HAQA(hidden_size, batch_size, K, W_init, config).to(device)
+    coref_model = HAQA(hidden_size, batch_size, K, W_init, config, max_sen_len).to(device)
 
     if len(sys.argv) > 4 and str(sys.argv[4]) == "load":
         try:
