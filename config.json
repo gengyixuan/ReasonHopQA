@@ -1,5 +1,5 @@
 {
-    "batch_size": 64,
+    "batch_size": 16,
     "grad_clip": 30,
     "nlayers": 3,
     "learning_rate": 0.0005,
