@@ -123,6 +123,7 @@ def get_doc_index_list(doc, token_dict, unk_dict):
 
 def get_doc_index_list_cut_sen(doc, token_dict, unk_dict, config):
     ret = []
+    max_sen_len = -1
 
     sen_start_end_list = []
     cur_start = 0
@@ -144,7 +145,10 @@ def get_doc_index_list_cut_sen(doc, token_dict, unk_dict, config):
 
     sen_start_end_list = sen_start_end_list[0: min(max_sen_cut, len(sen_start_end_list))]
 
-    return ret, sen_start_end_list
+    for one_start_end in sen_start_end_list:
+        max_sen_len = max(max_sen_len, one_start_end[1] - one_start_end[0])
+
+    return ret, sen_start_end_list, max_sen_len
 
 
 def get_char_index_list(doc, char_dict, max_word_len):
@@ -172,6 +176,7 @@ def generate_examples(input_p, vocab_dict, vocab_c_dict, config, data_type):
 
     sen_list = []
     n_sen_list = []
+    max_sen_len_all = -1
 
     with open(input_p, 'r', encoding="utf-8") as infile:
         for index, one_line in enumerate(infile):
@@ -203,7 +208,10 @@ def generate_examples(input_p, vocab_dict, vocab_c_dict, config, data_type):
             #------------------------------------------------------------------------
             # tokenize
             # doc_words = get_doc_index_list(doc_lower, vocab_dict, unk_dict)
-            doc_words, sen_cut = get_doc_index_list_cut_sen(doc_lower, vocab_dict, unk_dict, config)
+            doc_words, sen_cut, max_sen_len = get_doc_index_list_cut_sen(doc_lower, vocab_dict, unk_dict, config)
+
+            max_sen_len_all = max(max_sen_len_all, max_sen_len)
+
             sen_list.append(sen_cut)
             n_sen_list.append(len(sen_cut))
 
@@ -239,5 +247,5 @@ def generate_examples(input_p, vocab_dict, vocab_c_dict, config, data_type):
             if index % 2000 == 0: print("loading progress: " + str(index))
     
     print("max number of sentences: " + str(max(n_sen_list)))
-    return ret, sen_list
+    return ret, sen_list, max_sen_len_all
 

@@ -58,8 +58,11 @@ def main():
     K = 3
 
     # generate train/valid examples
-    train_data, sen_cut_train = generate_examples(train_path, vocab_dict, vocab_c_dict, config, "train")
-    dev_data, sen_cut_dev = generate_examples(valid_path, vocab_dict, vocab_c_dict, config, "dev")
+    train_data, sen_cut_train, max_sen_len_train = generate_examples(train_path, vocab_dict, vocab_c_dict, config, "train")
+    dev_data, sen_cut_dev, max_sen_len_dev = generate_examples(valid_path, vocab_dict, vocab_c_dict, config, "dev")
+
+    max_sen_len = max(max_sen_len_train, max_sen_len_dev)
+    print("max sentence len: " + str(max_sen_len))
 
     #------------------------------------------------------------------------
     # training process begins
