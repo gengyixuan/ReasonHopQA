@@ -42,7 +42,7 @@ class HAQA(torch.nn.Module):
         self.context_gru_3 = BiGRU(2*hidden_size, hidden_size, batch_size)
         self.query_gru_3 = BiGRU(embedding_size, hidden_size, batch_size)
 
-        self.max_sentence = MaxAttSentence(100, 2*hidden_size)
+        self.max_sentence = MaxAttSentence(config['max_doc_len'], 2*hidden_size)
 
     
     def forward(self, context, context_char, query, query_char, candidate, candidate_mask, startends):
