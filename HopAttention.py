@@ -25,7 +25,7 @@ class HAQA(torch.nn.Module):
         self.ga = GatedAttentionLayer() # non-parametrized
         self.gaao = GatedAttentionAttOnly() # non-parametrized
         self.ha = HopAttentionLayer() # parametrized
-        self.gating_w = Variable(torch.Tensor([0.5]), requires_grad=True)
+        self.gating_w = Variable(torch.Tensor([0.5]), requires_grad=True).to(device)
         self.pred = AnswerPredictionLayer() # non-parametrized
         self.K = K
         self.hidden_size = hidden_size
@@ -64,7 +64,7 @@ class HAQA(torch.nn.Module):
 
         # print(max_sentence)
         # return max_sentence
-        ha_out = self.ha(max_sentence, context_out_0)
+        ha_out = self.ha(max_sentence, context_out_0).to(device)
         # print('ha_out shape:',ha_out.shape)
         # print('att:', attention.shape)
         # print('ga_out shape:', ga_out.shape)
