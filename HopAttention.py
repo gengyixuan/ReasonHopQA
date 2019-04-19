@@ -39,7 +39,7 @@ class HAQA(torch.nn.Module):
         self.context_gru_3 = BiGRU(2*hidden_size, hidden_size, batch_size)
         self.query_gru_3 = BiGRU(embedding_size, hidden_size, batch_size)
 
-        self.max_sentence = MaxAttSentence(100, 128)
+        self.max_sentence = MaxAttSentence(100, 2*hidden_size)
 
     
     def forward(self, context, context_char, query, query_char, candidate, candidate_mask, startends):
@@ -62,9 +62,9 @@ class HAQA(torch.nn.Module):
         # print(max_sentence)
         # return max_sentence
         ha_out = self.ha(max_sentence, context_out_0)
-        print('ha_out shape:',ha_out.shape)
-        print('att:', attention.shape)
-        print('ga_out shape:', ga_out.shape)
+        # print('ha_out shape:',ha_out.shape)
+        # print('att:', attention.shape)
+        # print('ga_out shape:', ga_out.shape)
         layer_out_1 = (1 - self.gating_w) * ha_out + self.gating_w * ga_out
 
         #-----------------------------------------------------
