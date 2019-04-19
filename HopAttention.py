@@ -53,14 +53,14 @@ class HAQA(torch.nn.Module):
 
         #-----------------------------------------------------
         # first GA layer
-        context_out_0 = self.context_gru_0(context_embedding).to(device)
-        query_out_0 = self.query_gru_0(query_embedding).to(device)
-        attention = self.gaao(context_out_0, query_out_0).to(device)
-        ga_out = self.ga(context_out_0, query_out_0).to(device)
+        context_out_0 = self.context_gru_0(context_embedding)
+        query_out_0 = self.query_gru_0(query_embedding)
+        attention = self.gaao(context_out_0, query_out_0)
+        ga_out = self.ga(context_out_0, query_out_0)
 
         #-----------------------------------------------------
         # max sentence selection
-        max_sentence = self.max_sentence(startends, attention, context_out_0) # (batch, max_sentence_len, emb_size)
+        max_sentence = self.max_sentence(startends, attention, context_out_0).to(device) # (batch, max_sentence_len, emb_size)
 
         # print(max_sentence)
         # return max_sentence
