@@ -1,16 +1,17 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.autograd import Variable
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
-from modules import EmbeddingLayer
-from modules import BiGRU
-from modules import GatedAttentionLayer
-from modules import GatedAttentionAttOnly
-from modules import MaxAttSentence
-from modules import HopAttentionLayer
-from modules import AnswerPredictionLayer
+from layers import EmbeddingLayer
+from layers import BiGRU
+from layers import GatedAttentionLayer
+from layers import GatedAttentionAttOnly
+from layers import MaxAttSentence
+from layers import HopAttentionLayer
+from layers import AnswerPredictionLayer
 
 class HAQA(torch.nn.Module):
     def __init__(self, hidden_size, batch_size, K,  W_init, config):
@@ -52,6 +53,7 @@ class HAQA(torch.nn.Module):
         context_out_0 = self.context_gru_0(context_embedding)
         query_out_0 = self.query_gru_0(query_embedding)
         attention = self.gaao(context_out_0, query_out_0)
+        ga_out = self.ga(context_out_0, query_out_0)
 
         #-----------------------------------------------------
         # max sentence selection
@@ -60,7 +62,10 @@ class HAQA(torch.nn.Module):
         # print(max_sentence)
         # return max_sentence
         ha_out = self.ha(max_sentence, context_out_0)
-        layer_out_1 = (1 - self.gating_w) * ha_out + self.gating_w * attention
+        print('ha_out shape:',ha_out.shape)
+        print('att:', attention.shape)
+        print('ga_out shape:', ga_out.shape)
+        layer_out_1 = (1 - self.gating_w) * ha_out + self.gating_w * ga_out
 
         #-----------------------------------------------------
         context_out_2 = self.context_gru_2(layer_out_1)
