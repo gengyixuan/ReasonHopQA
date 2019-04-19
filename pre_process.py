@@ -127,7 +127,7 @@ def get_doc_index_list_cut_sen(doc, token_dict, unk_dict, config):
 
     sen_start_end_list = []
     cur_start = 0
-    max_sen_cut = config["max_sen_len"]
+    max_sen_number = config["max_sen_number"]
 
     for index, token in enumerate(doc):
         if token == '.':
@@ -143,7 +143,7 @@ def get_doc_index_list_cut_sen(doc, token_dict, unk_dict, config):
     if cur_start <= len(doc)-1:
         sen_start_end_list.append([cur_start, len(doc)])
 
-    sen_start_end_list = sen_start_end_list[0: min(max_sen_cut, len(sen_start_end_list))]
+    sen_start_end_list = sen_start_end_list[0: min(max_sen_number, len(sen_start_end_list))]
 
     for one_start_end in sen_start_end_list:
         max_sen_len = max(max_sen_len, one_start_end[1] - one_start_end[0])

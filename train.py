@@ -96,8 +96,6 @@ def main():
         batch_train_data, sen_cut_batch = generate_batch_data(train_data, config, "train", -1, sen_cut_train)  # -1 means random sampling
         # dw, m_dw, qw, m_qw, dc, m_dc, qc, m_qc, cd, m_cd, a, dei, deo, dri, dro = batch_train_data
 
-        print(len(sen_cut_batch))
-
         # zero the parameter gradients
         optimizer.zero_grad()
 

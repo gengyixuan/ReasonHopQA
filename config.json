@@ -1,5 +1,5 @@
 {
-    "batch_size": 4,
+    "batch_size": 8,
     "grad_clip": 30,
     "nlayers": 3,
     "learning_rate": 0.0005,
@@ -26,5 +26,5 @@
     "vocab_size": 100000,
     "num_characters": 500,
     "max_doc_len": 2200,
-    "max_sen_len": 100
+    "max_sen_number": 100
 }
