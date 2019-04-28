@@ -197,6 +197,27 @@ class HopAttentionLayer(torch.nn.Module):
         attention = self.softmax1(output_tensor) # 4 * 2000 * 1
         return torch.einsum("bnm, bnk -> bnk", attention, context_emb)
 
+
+class SelfAttentionLayer(torch.nn.Module):
+    def __init__(self, hidden_size, dropout_prob=0.1):
+        super(SelfAttentionLayer, self).__init__()
+        self.hidden_size = hidden_size
+        self.query = nn.Linear(hidden_size, hidden_size)
+        self.key = nn.Linear(hidden_size, hidden_size)
+        self.value = nn.Linear(hidden_size, hidden_size)
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, context_emb):
+        q, k, v = self.query(context_emb), self.key(context_emb), self.value(context_emb)
+        shape = q.size()[:-1]
+        q, k, v = [var.view(*shape).permute(0, 2, 1, 3) for var in (q, k, v)]
+        attention_scores = torch.matmul(q, k.transpose(3, 2))
+        attention_scores = attention_scores
+        attention_probs = nn.Softmax(dim=-1)(attention_scores)
+        attention_probs = self.dropout(attention_probs)
+        y = torch.matmul(attention_probs, v)
+        y = y.permute(0, 2, 1, 3).contiguous()
+        return y
         
 class AnswerPredictionLayer(torch.nn.Module):
     def __init__(self):
