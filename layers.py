@@ -177,6 +177,27 @@ class MaxAttSentence(torch.nn.Module):
         # concat all max_sentences in a batch into a single tensor
         return torch.cat(output_sentences, dim=0) # (batch, max_sentence_len, emb_dim)
 
+# output the top K word representations that have the maximum query-aware attention
+class MaxAttentionWords(torch.nn.Module):
+    def __init__(self):
+        super(MaxAttentionWords, self).__init__()
+
+    # attention: (B, N)
+    # context: (B, N, Dh)
+    def forward(self, attention, context, K):
+        # process batch by batch
+        all_batches_topk = []
+        for batch_id in range(attention.shape[0]):
+            batch_att = attention[batch_id, :]
+            res, ind = torch.topk(batch_att, K)
+            ind_numpy = ind.to(torch.device("cpu")).numpy()
+            topK_word_tensors = []
+            for idx in ind_numpy:
+                topK_word_tensors.append(context[batch_id, idx, :].unsqueeze(0))
+            all_batches_topk.append(torch.cat(topK_word_tensors, 0).unsqueeze(0))
+        
+        return torch.cat(all_batches_topk, dim=0) # (B, K, Dh)
+
 
 class HopAttentionLayer(torch.nn.Module):
     def __init__(self):
